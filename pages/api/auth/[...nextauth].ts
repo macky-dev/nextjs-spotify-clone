@@ -10,7 +10,6 @@ const refreshAccessToken = async (token: JWT) => {
     spotifyApi.setRefreshToken(token.refreshToken);
 
     const { body: refreshedToken } = await spotifyApi.refreshAccessToken();
-    console.log("refreshed token is", refreshedToken);
 
     return {
       ...token,
@@ -19,8 +18,6 @@ const refreshAccessToken = async (token: JWT) => {
       refreshToken: refreshedToken.refresh_token ?? token.refreshToken,
     };
   } catch (error) {
-    console.log(error);
-
     return {
       ...token,
       error: "RefreshAccessTokenError",

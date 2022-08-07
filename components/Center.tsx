@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { ChevronDownIcon } from "@heroicons/react/outline";
 import { useSession, signOut } from "next-auth/react";
-import { shuffle } from "lodash";
+import shuffle from "lodash/shuffle";
 import useSpotify from "../hooks/useSpotify";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { playlistIdState, playlistState } from "../atoms/playlistAtom";
