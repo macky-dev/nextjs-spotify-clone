@@ -4,7 +4,7 @@ import { useRecoilState } from "recoil";
 import { isPlayingState, currentTrackIdState } from "../atoms/songAtom";
 import useSpotify from "../hooks/useSpotify";
 import useSongInfo from "../hooks/useSongInfo";
-import { debounce } from "lodash";
+import debounce from "lodash/debounce";
 import {
   SwitchHorizontalIcon,
   ReplyIcon,
@@ -20,7 +20,7 @@ import {
 
 const Player = () => {
   const spotifyApi = useSpotify();
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const [currentTrackId, setCurrentTrackId] =
     useRecoilState(currentTrackIdState);
   const [isPlaying, setIsPlaying] = useRecoilState(isPlayingState);
@@ -30,10 +30,10 @@ const Player = () => {
 
   const fetchCurrentSong = () => {
     if (!songInfo) {
-      spotifyApi.getMyCurrentPlayingTrack().then((data) => {
+      spotifyApi.getMyCurrentPlayingTrack().then((data: any) => {
         setCurrentTrackId(data.body?.item?.id);
 
-        spotifyApi.getMyCurrentPlaybackState().then((data) => {
+        spotifyApi.getMyCurrentPlaybackState().then((data: any) => {
           setIsPlaying(data.body?.is_playing);
         });
       });
@@ -41,7 +41,7 @@ const Player = () => {
   };
 
   const handlePlayPause = () => {
-    spotifyApi.getMyCurrentPlaybackState().then((data) => {
+    spotifyApi.getMyCurrentPlaybackState().then((data: any) => {
       if (data.body.is_playing) {
         spotifyApi.pause();
         setIsPlaying(false);
@@ -67,7 +67,9 @@ const Player = () => {
 
   const debounceAdjustVolume = useCallback(
     debounce((volume) => {
-      spotifyApi.setVolume(volume).catch((err) => {});
+      spotifyApi
+        .setVolume(volume)
+        .catch((err: any) => console.log("Something went wrong", err));
     }, 500),
     [],
   );
@@ -77,7 +79,7 @@ const Player = () => {
       {/* Left */}
       <div className="flex items-center space-x-4">
         <img
-          src={songInfo?.album.images?.[0].url}
+          src={songInfo?.album.images[0].url}
           alt=""
           className="hidden md:inline h-10 w-10"
         />

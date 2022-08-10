@@ -18,24 +18,23 @@ const RANDOM_COLORS = [
 const Center = () => {
   const spotifyApi = useSpotify();
   const { data: session } = useSession();
-  const [headerBgColor, setHeaderBgColor] = useState(null);
+  const [headerBgColor, setHeaderBgColor] = useState("from-red-500");
   const playlistId = useRecoilValue(playlistIdState);
   const [playlist, setPlaylist] = useRecoilState(playlistState);
 
   useEffect(() => {
-    setHeaderBgColor(shuffle(RANDOM_COLORS).pop());
+    const color = shuffle(RANDOM_COLORS).pop();
+    setHeaderBgColor(color!);
   }, [playlistId]);
 
   useEffect(() => {
     spotifyApi
       .getPlaylist(playlistId)
-      .then((data) => {
+      .then((data: any) => {
         setPlaylist(data.body);
       })
-      .catch((err) => console.log("Something went wrong", err));
+      .catch((err: any) => console.log("Something went wrong", err));
   }, [playlistId]);
-
-  console.log(playlist);
 
   return (
     <div className="flex-grow text-white h-screen overflow-y-scroll scrollbar-hide">
@@ -46,7 +45,7 @@ const Center = () => {
         >
           <img
             className="rounded-full w-10 h-10"
-            src={session?.user?.image}
+            src={session?.user?.image!}
             alt=""
           />
           <h2>{session?.user?.name}</h2>
@@ -57,7 +56,7 @@ const Center = () => {
       <section
         className={`flex items-end space-x-7 bg-gradient-to-b to-black ${headerBgColor} h-80 text-white p-8 `}
       >
-        <img className="h-44 w-44 shadow-2xl" src={playlist?.images?.[0].url} />
+        <img className="h-44 w-44 shadow-2xl" src={playlist?.images[0].url} />
         <div className="">
           <p>PLAYLIST</p>
           <h1 className="text-2xl md:text-3xl xl:text-5xl font-bold">

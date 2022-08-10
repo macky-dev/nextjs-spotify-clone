@@ -1,4 +1,4 @@
-import type { NextPage } from "next";
+import type { NextPage, GetServerSideProps } from "next";
 import Head from "next/head";
 import Sidebar from "../components/Sidebar";
 import Center from "../components/Center";
@@ -25,7 +25,7 @@ const Home: NextPage = () => {
   );
 };
 
-export const getServerSideProps = async (context) => {
+export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getSession(context);
 
   return {

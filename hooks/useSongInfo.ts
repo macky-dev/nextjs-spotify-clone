@@ -1,13 +1,14 @@
-import useSpotify from "./useSpotify";
+import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import { currentTrackIdState } from "../atoms/songAtom";
-import { useEffect, useState } from "react";
+import { ITrackInfo } from "../models/spotifyModel";
+import useSpotify from "./useSpotify";
 
 const useSongInfo = () => {
   const spotifyApi = useSpotify();
   const [currentTrackId, setCurrentTrackId] =
     useRecoilState(currentTrackIdState);
-  const [songInfo, setSongInfo] = useState(null);
+  const [songInfo, setSongInfo] = useState<ITrackInfo | null>(null);
 
   useEffect(() => {
     const fetchSongInfo = async () => {
@@ -22,7 +23,7 @@ const useSongInfo = () => {
         ).then((res) => res.json());
 
         const artistString = trackInfo.artists
-          .map((artist: string) => artist.name)
+          .map((artist: { name: string }) => artist.name)
           .join(", ");
 
         setSongInfo({ ...trackInfo, artistString });

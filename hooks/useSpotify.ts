@@ -8,7 +8,7 @@ const spotifyApi = new SpotifyWebApi({
 });
 
 const useSpotify = () => {
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
 
   useEffect(() => {
     if (session) {
@@ -17,7 +17,9 @@ const useSpotify = () => {
         signIn();
       }
 
-      spotifyApi.setAccessToken(session?.user?.accessToken);
+      if (typeof session.accessToken === "string") {
+        spotifyApi.setAccessToken(session.accessToken);
+      }
     }
   }, [session]);
 
