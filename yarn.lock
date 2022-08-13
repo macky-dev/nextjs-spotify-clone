@@ -881,7 +881,7 @@ react-dom@18.1.0:
     loose-envify "^1.1.0"
     scheduler "^0.22.0"
 
-react-spotify-web-playback@^0.10.0:
+react-spotify-web-playback@0.10.0:
   version "0.10.0"
   resolved "https://registry.yarnpkg.com/react-spotify-web-playback/-/react-spotify-web-playback-0.10.0.tgz#f6a88f9f6b57fe994b2d592f5ec784a620ff4e55"
   integrity sha512-znU0vVrCGOu1+jGX/YmQHsr7tXa1VrwRPvGaRA6NyPhml8XHJJ7X6CPYz2nCvBSg1XhQA2Iv0L5xIcswFcI4fg==

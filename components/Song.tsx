@@ -1,5 +1,5 @@
 import { useRecoilState } from "recoil";
-import { currentTrackIdState, isPlayingState } from "../atoms/songAtom";
+import { currentTrackUriState, isPlayingState } from "../atoms/songAtom";
 import useSpotify from "../hooks/useSpotify";
 import { millisToMinutesAndSeconds } from "../lib/time";
 import { ITrackInfo } from "../models/spotifyModel";
@@ -11,7 +11,8 @@ interface SongProps {
 
 const Song = ({ track, order }: SongProps) => {
   const spotifyApi = useSpotify();
-  const [currentTrack, setCurrentTrack] = useRecoilState(currentTrackIdState);
+  const [currentTrackUri, setCurrentTrackUri] =
+    useRecoilState(currentTrackUriState);
   const [isPlaying, setIsPlaying] = useRecoilState(isPlayingState);
 
   const artistString = track.artists
@@ -19,9 +20,12 @@ const Song = ({ track, order }: SongProps) => {
     .join(", ");
 
   const playSong = () => {
-    setCurrentTrack(track.id);
+    setCurrentTrackUri(track.uri);
     setIsPlaying(true);
-    spotifyApi.play({ uris: [track.uri] });
+    spotifyApi
+      .play({ uris: [track.uri] })
+      .then(() => console.log("Playback started"))
+      .catch((err) => console.log("Something went wrong!", err));
   };
 
   return (

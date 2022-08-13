@@ -1,32 +1,44 @@
-import type { NextPage, GetServerSideProps } from "next";
+import { ReactElement } from "react";
+import type { GetServerSideProps } from "next";
+import type { NextPageWithLayout } from "./_app";
+import { authOptions } from "./api/auth/[...nextauth]";
+import { unstable_getServerSession } from "next-auth/next";
 import Head from "next/head";
-import Sidebar from "../components/Sidebar";
-import Center from "../components/Center";
-import Player from "../components/Player";
-import { getSession } from "next-auth/react";
+import Layout from "../components/Layout";
+import Dashboard from "../components/Dashboard";
 
-const Home: NextPage = () => {
+const Home: NextPageWithLayout = () => {
   return (
-    <div className="h-screen bg-black overflow-hidden">
+    <>
       <Head>
         <title>Spotify Clone</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="flex">
-        <Sidebar />
-        <Center />
-      </main>
-
-      <div className="sticky bottom-0">
-        <Player />
-      </div>
-    </div>
+      <Dashboard />
+    </>
   );
 };
 
+Home.getLayout = function getLayout(page: ReactElement) {
+  return <Layout>{page}</Layout>;
+};
+
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const session = await getSession(context);
+  const session = await unstable_getServerSession(
+    context.req,
+    context.res,
+    authOptions,
+  );
+
+  if (!session) {
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
+    };
+  }
 
   return {
     props: {

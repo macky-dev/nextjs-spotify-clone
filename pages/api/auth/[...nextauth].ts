@@ -1,8 +1,7 @@
-import NextAuth from "next-auth";
+import NextAuth, { NextAuthOptions, Session } from "next-auth";
 import SpotifyProvider from "next-auth/providers/spotify";
-import spotifyApi, { LOGIN_URL } from "../../../lib/spotify";
 import { JWT } from "next-auth/jwt";
-import { Session, Account, User } from "next-auth";
+import spotifyApi, { LOGIN_URL } from "../../../lib/spotify";
 
 const refreshAccessToken = async (token: JWT) => {
   try {
@@ -27,7 +26,7 @@ const refreshAccessToken = async (token: JWT) => {
   }
 };
 
-export default NextAuth({
+export const authOptions: NextAuthOptions = {
   // Configure one or more authentication providers
   providers: [
     SpotifyProvider({
@@ -73,4 +72,6 @@ export default NextAuth({
       return session;
     },
   },
-});
+};
+
+export default NextAuth(authOptions);

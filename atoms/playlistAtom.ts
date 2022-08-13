@@ -8,5 +8,5 @@ export const playlistState = atom<IPlaylist | null>({
 
 export const playlistIdState = atom<string>({
   key: "playlistId",
-  default: "7mnryfbY1oOH2ZHlQE8tj5",
+  default: "",
 });

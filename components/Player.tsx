@@ -1,127 +1,41 @@
-import { useCallback, useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
 import { useRecoilState } from "recoil";
-import { isPlayingState, currentTrackIdState } from "../atoms/songAtom";
-import useSpotify from "../hooks/useSpotify";
-import useSongInfo from "../hooks/useSongInfo";
-import debounce from "lodash/debounce";
-import {
-  SwitchHorizontalIcon,
-  ReplyIcon,
-  PauseIcon,
-  VolumeOffIcon,
-} from "@heroicons/react/outline";
-import {
-  RewindIcon,
-  PlayIcon,
-  FastForwardIcon,
-  VolumeUpIcon,
-} from "@heroicons/react/solid";
+import { isPlayingState } from "../atoms/songAtom";
+import SpotifyPlayer from "react-spotify-web-playback";
 
-const Player = () => {
-  const spotifyApi = useSpotify();
-  const { data: session } = useSession();
-  const [currentTrackId, setCurrentTrackId] =
-    useRecoilState(currentTrackIdState);
+interface PlayerProps {
+  token: string;
+  trackUri: string | null;
+}
+
+const Player = ({ token, trackUri }: PlayerProps) => {
   const [isPlaying, setIsPlaying] = useRecoilState(isPlayingState);
-  const [volume, setVolume] = useState(50);
-
-  const songInfo = useSongInfo();
-
-  const fetchCurrentSong = () => {
-    if (!songInfo) {
-      spotifyApi.getMyCurrentPlayingTrack().then((data: any) => {
-        setCurrentTrackId(data.body?.item?.id);
-
-        spotifyApi.getMyCurrentPlaybackState().then((data: any) => {
-          setIsPlaying(data.body?.is_playing);
-        });
-      });
-    }
-  };
-
-  const handlePlayPause = () => {
-    spotifyApi.getMyCurrentPlaybackState().then((data: any) => {
-      if (data.body.is_playing) {
-        spotifyApi.pause();
-        setIsPlaying(false);
-      } else {
-        spotifyApi.play();
-        setIsPlaying(true);
-      }
-    });
-  };
-
-  useEffect(() => {
-    if (spotifyApi.getAccessToken() && !currentTrackId) {
-      fetchCurrentSong();
-      setVolume(50);
-    }
-  }, [currentTrackId, session, spotifyApi]);
-
-  useEffect(() => {
-    if (volume > 0 && volume < 100) {
-      debounceAdjustVolume(volume);
-    }
-  }, [volume]);
-
-  const debounceAdjustVolume = useCallback(
-    debounce((volume) => {
-      spotifyApi
-        .setVolume(volume)
-        .catch((err: any) => console.log("Something went wrong", err));
-    }, 500),
-    [],
-  );
 
   return (
-    <div className="h-24 bg-gradient-to-b from-black to-gray-900 text-white grid grid-cols-3 text-xs md:text-base px-2 md:px-8">
-      {/* Left */}
-      <div className="flex items-center space-x-4">
-        <img
-          src={songInfo?.album.images[0].url}
-          alt=""
-          className="hidden md:inline h-10 w-10"
-        />
-        <div>
-          <h3>{songInfo?.name}</h3>
-          <h3>{songInfo?.artistString}</h3>
-        </div>
-      </div>
-      {/* Center */}
-      <div className="flex items-center justify-evenly">
-        <SwitchHorizontalIcon className="button" />
-        <RewindIcon className="button" />
-
-        {isPlaying ? (
-          <PauseIcon className="button w-10 h-10" onClick={handlePlayPause} />
-        ) : (
-          <PlayIcon className="button w-10 h-10" onClick={handlePlayPause} />
-        )}
-
-        <FastForwardIcon className="button" />
-        <ReplyIcon className="button" />
-      </div>
-      {/* Right */}
-      <div className="flex items-center space-x-3 md:space-x-4 justify-end">
-        <VolumeOffIcon
-          className="button"
-          onClick={() => volume < 100 && setVolume((prev) => prev - 10)}
-        />
-        <input
-          className="w-14 md:w-28"
-          type="range"
-          min={0}
-          max={100}
-          value={volume}
-          onChange={(e) => setVolume(Number(e.target.value))}
-        />
-        <VolumeUpIcon
-          className="button"
-          onClick={() => volume < 100 && setVolume((prev) => prev + 10)}
-        />
-      </div>
-    </div>
+    <SpotifyPlayer
+      name="spotify.markmartinez.dev"
+      token={token}
+      uris={trackUri ? [trackUri] : []}
+      autoPlay={true}
+      play={isPlaying}
+      callback={(state) => {
+        setIsPlaying(state.isPlaying);
+      }}
+      magnifySliderOnHover={true}
+      showSaveIcon={true}
+      styles={{
+        activeColor: "#1cb954",
+        bgColor: "#181818",
+        color: "#fff",
+        loaderColor: "#1cb954",
+        sliderColor: "#fff",
+        sliderTrackColor: "#6b7280",
+        sliderHandleColor: "#fff",
+        sliderHandleBorderRadius: 50,
+        sliderTrackBorderRadius: 50,
+        trackArtistColor: "#6b7280",
+        trackNameColor: "#fff",
+      }}
+    />
   );
 };
 

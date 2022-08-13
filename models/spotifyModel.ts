@@ -5,6 +5,7 @@ export interface IPlaylist {
   description: string;
   images: { url: string }[];
   tracks: { items: { track: ITrackInfo }[] };
+  owner: { display_name: string };
 }
 
 export interface ITrackInfo {
