@@ -17,7 +17,7 @@ const FeaturedPlaylistSection = () => {
   }, []);
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 min-w-full max-h-fit">
+    <div className="grid grid-cols-autoFit gap-6">
       {featuredPlaylist.map((playlist) => (
         <FeaturedPlaylistItem key={playlist.id} playlist={playlist} />
       ))}

@@ -5,7 +5,7 @@ import type { AppProps } from "next/app";
 import { SessionProvider } from "next-auth/react";
 import { RecoilRoot } from "recoil";
 
-export type NextPageWithLayout = NextPage & {
+export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;
 };
 

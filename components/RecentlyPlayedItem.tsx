@@ -27,12 +27,12 @@ const RecentlyPlayedItem = ({
 
   return (
     <div
-      className="flex items-center justify-between bg-gray-500/30 hover:bg-gray-500/50 rounded-md h-20 hidePlayWrap"
+      className="flex items-center justify-between bg-gray-500/30 hover:bg-gray-500/50 rounded-md h-20 hidePlayWrap cursor-pointer"
       onClick={playSong}
     >
       <div className="flex flex-row items-center space-x-4">
         <img src={album.images[0].url} className="h-20 w-20" alt="" />
-        <p className="flex text-white truncate">{name}</p>
+        <p className="w-full text-white truncate">{name}</p>
       </div>
       <PlayIcon className="h-14 w-14 text-green-500 mx-2 drop-shadow-lg hover:scale-110" />
     </div>

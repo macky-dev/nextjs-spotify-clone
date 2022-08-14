@@ -43,7 +43,7 @@ const Song = ({ track, order }: SongProps) => {
       </div>
 
       <div className="flex items-center justify-between ml-auto md:ml-0">
-        <p className="w-40 hidden md:inline ">album</p>
+        <p className="w-40 hidden md:inline ">{track.album.name}</p>
         <p>{millisToMinutesAndSeconds(track.duration_ms)}</p>
       </div>
     </div>

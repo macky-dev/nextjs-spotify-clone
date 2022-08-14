@@ -11,7 +11,7 @@ export interface IPlaylist {
 export interface ITrackInfo {
   id: string;
   name: string;
-  album: { images: { url: string }[] };
+  album: { images: { url: string }[]; name: string };
   artistString: string;
   artists: { name: string }[];
   uri: string;

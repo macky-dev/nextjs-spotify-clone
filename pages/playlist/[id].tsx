@@ -5,12 +5,13 @@ import { unstable_getServerSession } from "next-auth";
 import { authOptions } from "../api/auth/[...nextauth]";
 import { useRecoilState } from "recoil";
 import shuffle from "lodash/shuffle";
-import useSpotify from "../../hooks/useSpotify";
 import { playlistState } from "../../atoms/playlistAtom";
 import type { NextPageWithLayout } from "../_app";
 import Songs from "../../components/Songs";
 import Layout from "../../components/Layout";
 import Head from "next/head";
+import { IPlaylist } from "../../models/spotifyModel";
+import spotifyApi from "../../lib/spotify";
 
 const RANDOM_COLORS = [
   "from-red-500",
@@ -20,29 +21,24 @@ const RANDOM_COLORS = [
   "from-purple-500",
 ];
 
-const Playlist: NextPageWithLayout = () => {
+const Playlist: NextPageWithLayout<{ playlist: IPlaylist }> = ({
+  playlist,
+}) => {
   const router = useRouter();
   const playlistId = router.query.id as string;
   const [headerBgColor, setHeaderBgColor] = useState("from-red-500");
-  const [playlist, setPlaylist] = useRecoilState(playlistState);
-  const spotifyApi = useSpotify();
+  const [_, setPlaylist] = useRecoilState(playlistState);
 
   useEffect(() => {
     const color = shuffle(RANDOM_COLORS).pop();
     setHeaderBgColor(color!);
-
-    spotifyApi
-      .getPlaylist(playlistId)
-      .then((data: any) => {
-        setPlaylist(data.body);
-      })
-      .catch((err: any) => console.log("Something went wrong", err));
+    setPlaylist(playlist);
   }, [playlistId]);
 
   return (
     <>
       <Head>
-        <title>Spotify Clone - {playlist?.name}</title>
+        <title>Spotify Clone - {playlist.name}</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <section
@@ -50,14 +46,14 @@ const Playlist: NextPageWithLayout = () => {
       >
         <img
           className="h-44 w-44 lg:h-60 lg:w-60 shadow-2xl"
-          src={playlist?.images[0].url}
+          src={playlist.images[0].url}
         />
         <div>
           <p>PLAYLIST</p>
           <h1 className="text-2xl md:text-3xl xl:text-5xl font-bold">
-            {playlist?.name}
+            {playlist.name}
           </h1>
-          <p>{playlist?.description}</p>
+          <p>{playlist.description}</p>
         </div>
       </section>
 
@@ -78,6 +74,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     context.res,
     authOptions,
   );
+  const playlistId = context.params!.id as string;
 
   if (!session) {
     return {
@@ -88,9 +85,14 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   }
 
+  typeof session.accessToken === "string" &&
+    spotifyApi.setAccessToken(session.accessToken);
+  const { body: playlist } = await spotifyApi.getPlaylist(playlistId);
+
   return {
     props: {
       session,
+      playlist,
     },
   };
 };
